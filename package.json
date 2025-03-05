@@ -1,0 +1,25 @@
+{
+  "name": "se_project_express",
+  "version": "0.1.0",
+  "description": "Back-end project express.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kevo6554/se_project_express.git"
+  },
+  "keywords": [
+    "Niner"
+  ],
+  "author": "Kevin Witherspoon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Kevo6554/se_project_express/issues"
+  },
+  "homepage": "https://github.com/Kevo6554/se_project_express#readme",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
