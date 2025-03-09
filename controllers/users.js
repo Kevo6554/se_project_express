@@ -1,4 +1,10 @@
 const User = require("../models/user");
+const {
+  SERVER_ERROR,
+  NOT_FOUND,
+  BAD_REQUEST,
+  CREATED,
+} = require("../utils/errors");
 
 const getUsers = (req, res) => {
   User.find({})
@@ -7,8 +13,47 @@ const getUsers = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      return res.status(500).send({ message: err.message });
+      return res.status(SERVER_ERROR).send({ message: err.message });
     });
 };
 
-module.exports = { getUsers };
+const createUser = (req, res) => {
+  const { name, avatar } = req.body;
+  User.create({ name, avatar })
+    .then((user) => res.status(CREATED).send(user))
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        return res
+          .status(BAD_REQUEST)
+          .send({ message: "Invalid data provided" });
+      }
+      return res
+        .status(SERVER_ERROR)
+        .send({ message: "An error has occured on the server" });
+    });
+};
+
+const getUser = (req, res) => {
+  const { userId } = req.params;
+  User.findById(userId)
+    .orFail()
+    .then((user) => res.send(user))
+    .catch((err) => {
+      console.error(err);
+      if (err.name === "CastError") {
+        return res
+          .status(BAD_REQUEST)
+          .send({ message: "Invalid data provided" });
+      }
+      if (err.name === "DocumentNotFound") {
+        return res
+          .status(NOT_FOUND)
+          .send({ message: "Id provided wan not found" });
+      }
+      return res
+        .status(SERVER_ERROR)
+        .send({ message: "An error has occured on the server" });
+    });
+};
+
+module.exports = { getUsers, getUser, createUser };
