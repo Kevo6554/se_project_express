@@ -15,29 +15,29 @@ const createItem = (req, res) => {
   ClothingItem.create({ name, weather, imageURL })
     .then((item) => {
       console.log(item);
-      res.status(CREATED).send({ data: item });
+      res.status(CREATED).json({ data: item });
     })
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
         return res
           .status(BAD_REQUEST)
-          .send({ message: "Invalid data provided" });
+          .json({ message: "Invalid data provided" });
       }
       return res
         .status(SERVER_ERROR)
-        .send({ messsage: "An error has occurred on the server" });
+        .json({ messsage: "An error has occurred on the server" });
     });
 };
 
 const getItems = (req, res) => {
   ClothingItem.find({})
-    .then((items) => res.send(items))
+    .then((item) => res.send(item))
     .catch((err) => {
       console.error(err);
       return res
         .status(NOT_FOUND)
-        .send({ message: "Id provided was not found" });
+        .json({ message: "Id provided was not found" });
     });
 };
 
@@ -54,16 +54,16 @@ const deleteItem = (req, res) => {
       if (err.name === "CastError") {
         return res
           .status(BAD_REQUEST)
-          .send({ message: "Invalid data provided" });
+          .json({ message: "Invalid data provided" });
       }
       if (err.name === "DocumentNotFound") {
         return res
           .status(NOT_FOUND)
-          .send({ message: "Id provided was not found" });
+          .json({ message: "Id provided was not found" });
       }
       return res
         .status(SERVER_ERROR)
-        .send({ message: "An error has occurred on the server" });
+        .json({ message: "An error has occurred on the server" });
     });
 };
 
@@ -81,16 +81,16 @@ const likeItem = (req, res) => {
       if (err.name === "CastError") {
         return res
           .status(BAD_REQUEST)
-          .send({ message: "Invalid data provided" });
+          .json({ message: "Invalid data provided" });
       }
       if (err.name === "DocumentNotFound") {
         return res
           .status(NOT_FOUND)
-          .send({ message: "Id provided was not found" });
+          .json({ message: "Id provided was not found" });
       }
       return res
         .status(SERVER_ERROR)
-        .send({ message: "An error has occurred on the server" });
+        .json({ message: "An error has occurred on the server" });
     });
 };
 const dislikeItem = (req, res) => {
@@ -107,16 +107,16 @@ const dislikeItem = (req, res) => {
       if (err.name === "CastError") {
         return res
           .status(BAD_REQUEST)
-          .send({ message: "Invalid data provided" });
+          .json({ message: "Invalid data provided" });
       }
       if (err.name === "DocumentNotFound") {
         return res
           .status(NOT_FOUND)
-          .send({ message: "Id provided was not found" });
+          .json({ message: "Id provided was not found" });
       }
       return res
         .status(SERVER_ERROR)
-        .send({ message: "An error has occurred on the server" });
+        .json({ message: "An error has occurred on the server" });
     });
 };
 module.exports = {
