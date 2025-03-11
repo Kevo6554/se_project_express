@@ -1,5 +1,17 @@
-const mongoose = require("mongoose");
+const router = require("express").Router();
 
-const clothingItemSchema = new mongoose.Schema({});
+const {
+  createItem,
+  getItems,
+  deleteItem,
+  likeItem,
+  dislikeItem,
+} = require("../controllers/clothingItems");
 
-module.exports = mongoose.model("item", clothingItemSchema);
+router.post("/", createItem);
+router.get("/", getItems);
+router.delete("/:itemId", deleteItem);
+router.put("/:itemId/likes", likeItem);
+router.delete("/:itemId/like", dislikeItem);
+
+module.exports = router;
