@@ -37,18 +37,18 @@ const getUser = (req, res) => {
   const { userId } = req.params;
   User.findById(userId)
     .orFail()
-    .then((user) => res.send(user))
+    .then((user) => res.status(CREATED).send(user))
     .catch((err) => {
       console.error(err);
+      if (err.name === "DocumentNotFound") {
+        return res
+          .status(NOT_FOUND)
+          .send({ message: "Id provided was not found" });
+      }
       if (err.name === "CastError") {
         return res
           .status(BAD_REQUEST)
           .send({ message: "Invalid data provided" });
-      }
-      if (err.name === "DocumentNotFound") {
-        return res
-          .status(NOT_FOUND)
-          .send({ message: "Id provided wan not found" });
       }
       return res
         .status(SERVER_ERROR)

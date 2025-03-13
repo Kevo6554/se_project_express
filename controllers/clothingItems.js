@@ -7,8 +7,7 @@ const {
 } = require("../utils/errors");
 
 const createItem = (req, res) => {
-  console.log(req);
-  console.log(req.body);
+  console.log(req.user._id);
 
   const { name, weather, imageURL } = req.body;
 
@@ -51,15 +50,15 @@ const deleteItem = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      if (err.name === "CastError") {
-        return res
-          .status(BAD_REQUEST)
-          .json({ message: "Invalid data provided" });
-      }
       if (err.name === "DocumentNotFound") {
         return res
           .status(NOT_FOUND)
           .json({ message: "Id provided was not found" });
+      }
+      if (err.name === "CastError") {
+        return res
+          .status(BAD_REQUEST)
+          .json({ message: "Invalid data provided" });
       }
       return res
         .status(SERVER_ERROR)
