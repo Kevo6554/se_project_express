@@ -10,8 +10,9 @@ const createItem = (req, res) => {
   console.log(req.user._id);
 
   const { name, weather, imageURL } = req.body;
+  const ownerId = req.user._id;
 
-  ClothingItem.create({ name, weather, imageURL })
+  ClothingItem.create({ name, weather, imageURL, owner: ownerId })
     .then((item) => {
       console.log(item);
       res.status(CREATED).json({ data: item });

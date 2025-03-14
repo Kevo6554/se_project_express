@@ -1,6 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const userRoutes = require("./routes/index");
+const indexRoutes = require("./routes/index");
 
 const { PORT = 3001 } = process.env;
 
@@ -13,14 +13,14 @@ mongoose
   })
   .catch((e) => console.error(e));
 
-app.use(express.json());
-app.use("/users", userRoutes);
 app.use((req, res, next) => {
   req.user = {
     _id: "67cf2951c7ab5c32d69abbad", // Replace with a valid ObjectId
   };
   next();
 });
+app.use(express.json());
+app.use("/", indexRoutes);
 app.listen(PORT, () => {
   // if everything works fine, the console will show which port the application is listening to
   console.log(`App listening at port ${PORT}`);
