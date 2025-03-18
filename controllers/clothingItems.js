@@ -10,8 +10,14 @@ const createItem = (req, res) => {
   console.log(req.user._id);
 
   const { name, weather, imageUrl } = req.body;
+
   const ownerId = req.user._id;
 
+  if (!name || name.length < 2 || !weather || !imageUrl) {
+    return res.status(BAD_REQUEST).json({ message: "Invalid data provided" });
+  }
+
+  console.log({ name, weather, imageUrl, ownerId });
   ClothingItem.create({ name, weather, imageUrl, owner: ownerId })
     .then((item) => {
       console.log(item);
@@ -51,7 +57,7 @@ const deleteItem = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      if (err.name === "DocumentNotFound") {
+      if (err.name === "DocumentNotFoundError") {
         return res
           .status(NOT_FOUND)
           .json({ message: "Id provided was not found" });
@@ -75,7 +81,7 @@ const likeItem = (req, res) => {
     { new: true }
   )
     .orFail()
-    .then((item) => res.statuse(CREATED).send(item))
+    .then((item) => res.status(CREATED).send(item))
     .catch((err) => {
       console.error(err);
       if (err.name === "CastError") {
@@ -83,7 +89,7 @@ const likeItem = (req, res) => {
           .status(BAD_REQUEST)
           .json({ message: "Invalid data provided" });
       }
-      if (err.name === "DocumentNotFound") {
+      if (err.name === "DocumentNotFoundError") {
         return res
           .status(NOT_FOUND)
           .json({ message: "Id provided was not found" });
@@ -109,7 +115,7 @@ const dislikeItem = (req, res) => {
           .status(BAD_REQUEST)
           .json({ message: "Invalid data provided" });
       }
-      if (err.name === "DocumentNotFound") {
+      if (err.name === "DocumentNotFoundError") {
         return res
           .status(NOT_FOUND)
           .json({ message: "Id provided was not found" });

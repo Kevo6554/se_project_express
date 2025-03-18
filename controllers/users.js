@@ -4,6 +4,7 @@ const {
   NOT_FOUND,
   BAD_REQUEST,
   CREATED,
+  OK,
 } = require("../utils/errors");
 
 const getUsers = (req, res) => {
@@ -37,10 +38,10 @@ const getUser = (req, res) => {
   const { userId } = req.params;
   User.findById(userId)
     .orFail()
-    .then((user) => res.status(CREATED).send(user))
+    .then((user) => res.status(OK).send(user))
     .catch((err) => {
       console.error(err);
-      if (err.name === "DocumentNotFound") {
+      if (err.name === "DocumentNotFoundError") {
         return res
           .status(NOT_FOUND)
           .send({ message: "Id provided was not found" });
