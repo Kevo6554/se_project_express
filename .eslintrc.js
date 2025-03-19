@@ -3,7 +3,7 @@ module.exports = {
     es2021: true,
     node: true,
   },
-  extends: ["eslint:reccomend", "airbnb-base", "prettier"],
+  extends: ["eslint:reccomended", "airbnb-base", "prettier"],
   overrides: [
     {
       env: {
@@ -20,7 +20,6 @@ module.exports = {
     sourceType: "module",
   },
   rules: {
-    camelcase: ["error", { allow: ["_id"] }],
     "no-console": ["warn", { allow: ["error"] }],
     "no-underscore-dangle": ["error", { allow: ["_id"] }],
   },

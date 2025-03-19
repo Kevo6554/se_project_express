@@ -18,7 +18,7 @@ const createItem = (req, res) => {
   }
 
   console.log({ name, weather, imageUrl, ownerId });
-  ClothingItem.create({ name, weather, imageUrl, owner: ownerId })
+  return ClothingItem.create({ name, weather, imageUrl, owner: ownerId })
     .then((item) => {
       console.log(item);
       res.status(CREATED).json({ data: item });
