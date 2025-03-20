@@ -42,8 +42,8 @@ const getItems = (req, res) => {
     .catch((err) => {
       console.error(err);
       return res
-        .status(NOT_FOUND)
-        .json({ message: "Id provided was not found" });
+        .status(SERVER_ERROR)
+        .json({ message: "An error has occurred on the server" });
     });
 };
 
