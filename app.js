@@ -22,9 +22,7 @@ app.use((req, res, next) => {
 });
 app.use(express.json());
 app.use("/", indexRoutes);
-app.use((req, res) => {
-  res.status(NOT_FOUND).json({ message: "Id provided was not found" });
-});
+
 app.listen(PORT, () => {
   // if everything works fine, the console will show which port the application is listening to
   console.log(`App listening at port ${PORT}`);
