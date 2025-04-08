@@ -7,6 +7,10 @@ const { PORT = 3001 } = process.env;
 
 const app = express();
 
+const cors = require("cors");
+
+app.use(cors());
+
 mongoose
   .connect("mongodb://127.0.0.1:27017/wtwr_db")
   .then(() => {
@@ -14,12 +18,6 @@ mongoose
   })
   .catch((e) => console.error(e));
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: "67cf2951c7ab5c32d69abbad", // Replace with a valid ObjectId
-  };
-  next();
-});
 app.use(express.json());
 app.use("/", indexRoutes);
 
