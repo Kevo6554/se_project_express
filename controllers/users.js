@@ -10,6 +10,7 @@ const {
   OK,
   ERROR,
   CREATED,
+  CONFLICT_ERROR,
 } = require("../utils/errors");
 
 const { JWT_SECRET } = require("../utils/config");
@@ -33,10 +34,10 @@ const login = (req, res, next) => {
       console.error(err);
       if (err.message === "Incorrect email or password") {
         return res.status(ERROR).send({ message: "Authorization required" });
-      }
-      return res
-        .status(SERVER_ERROR)
-        .send({ message: "An error has occurred on the server" });
+      } else
+        return res
+          .status(SERVER_ERROR)
+          .send({ message: "An error has occurred on the server" });
     });
 };
 
@@ -66,6 +67,7 @@ const createUser = (req, res) => {
       if (existingUser) {
         const error = new Error("Duplicated");
         error.code = 11000;
+        throw error;
       }
       return bcrypt.hashSync(password, 10);
       // hash the password
@@ -77,10 +79,16 @@ const createUser = (req, res) => {
       res.status(CREATED).send(responseUser); // send the user without the password
     })
     .catch((err) => {
+      console.log(">>>", err);
       if (err.name === "ValidationError") {
         return res
           .status(BAD_REQUEST)
           .send({ message: "Invalid data provided" });
+      }
+      if (err.code === 11000) {
+        return res
+          .status(CONFLICT_ERROR)
+          .send({ message: "User already exist" });
       }
       return res
         .status(SERVER_ERROR)
@@ -89,8 +97,8 @@ const createUser = (req, res) => {
 };
 
 const getUser = (req, res) => {
-  const { userId } = req.params;
-  User.findById(userId)
+  const { _id } = req.user;
+  User.findById(_id)
     .orFail()
     .then((user) => res.status(OK).send(user))
     .catch((err) => {

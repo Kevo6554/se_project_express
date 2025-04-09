@@ -12,7 +12,7 @@ function auth(req, res, next) {
   }
 
   // Extract the toke from the authorizarion header
-  const token = authorization.replace("Bearer", "");
+  const token = authorization.replace("Bearer ", "");
   let payload; // Initialize the payload variable
 
   // Verify the token
