@@ -15,7 +15,7 @@ const {
 
 const { JWT_SECRET } = require("../utils/config");
 
-const login = (req, res, next) => {
+const login = (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -28,26 +28,14 @@ const login = (req, res, next) => {
           expiresIn: "7d",
         }),
       });
-      res.send({ token });
     })
     .catch((err) => {
       console.error(err);
       if (err.message === "Incorrect email or password") {
-        return res.status(ERROR).send({ message: "Authorization required" });
-      } else
         return res
-          .status(SERVER_ERROR)
-          .send({ message: "An error has occurred on the server" });
-    });
-};
-
-const getUsers = (req, res) => {
-  User.find({})
-    .then((users) => {
-      res.send(users);
-    })
-    .catch((err) => {
-      console.error(err);
+          .status(ERROR)
+          .send({ message: "Incorrect email or password" });
+      }
       return res
         .status(SERVER_ERROR)
         .send({ message: "An error has occurred on the server" });
@@ -61,7 +49,7 @@ const createUser = (req, res) => {
     return res.status(BAD_REQUEST).send({ message: "Invalid data provided" });
   }
 
-  //check if the user exists
+  // check if the user exists
   return User.findOne({ email })
     .then((existingUser) => {
       if (existingUser) {
@@ -119,4 +107,34 @@ const getUser = (req, res) => {
     });
 };
 
-module.exports = { getUsers, getUser, createUser, login };
+const updateUser = async (req, res, next) => {
+  const { name, avatar } = req.body;
+
+  try {
+    //prepare the update
+    const updateData = {};
+    if (name) updateData.name = name;
+    if (avatar) updateData.avatar = avatar;
+
+    // Update the user
+    const user = await User.findByIdAndUpdate(req.user._id, updateData, {
+      new: true,
+      runValidators: true,
+    }).orFail();
+
+    // Exclude the password
+    const { password: _, ...userWithoutPassword } = user.toObject();
+    return res.status(OK).send({ data: userWithoutPassword });
+  } catch (err) {
+    console.error(err);
+    if (err.name === "DocumentNotFoundError") {
+      return next(new NOT_FOUND("User not found"));
+    }
+    if (err.name === "ValidationError") {
+      return next(new BAD_REQUEST("User not found"));
+    }
+    return next(err);
+  }
+};
+
+module.exports = { getUser, createUser, login, updateUser };

@@ -13,10 +13,6 @@ const createItem = (req, res) => {
 
   const ownerId = req.user._id;
 
-  if (!name || name.length < 2 || !weather || !imageUrl) {
-    return res.status(BAD_REQUEST).json({ message: "Invalid data provided" });
-  }
-
   console.log({ name, weather, imageUrl, ownerId });
   return ClothingItem.create({ name, weather, imageUrl, owner: ownerId })
     .then((item) => {
@@ -50,7 +46,7 @@ const getItems = (req, res) => {
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
   console.log(itemId);
-  ClothingItem.findByIdAndDelete(itemId)
+  ClothingItem.findById(itemId)
     .orFail()
     .then((item) => {
       res.send(item);

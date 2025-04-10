@@ -8,7 +8,7 @@ function auth(req, res, next) {
 
   if (!authorization || !authorization.startsWith("Bearer")) {
     // check if the authorization header from the request
-    return res.status(ERROR).send({ message: "Incorrect email or password" }); // If not throw an error
+    return res.status(ERROR).send({ message: "Authorization is required" }); // If not throw an error
   }
 
   // Extract the toke from the authorizarion header
@@ -19,7 +19,7 @@ function auth(req, res, next) {
   try {
     payload = jwt.verify(token, JWT_SECRET); // Use the JWT_SECRET to verify the token
   } catch (err) {
-    return res.status(ERROR).send({ message: "Incorrect email or password" });
+    return res.status(ERROR).send({ message: "Authorization is required" });
   }
   req.user = payload; // Add the payload to the request object
 
