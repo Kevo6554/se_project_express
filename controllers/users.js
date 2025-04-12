@@ -107,11 +107,11 @@ const getUser = (req, res) => {
     });
 };
 
-const updateUser = async (req, res, next) => {
+const updateUser = async (req, res) => {
   const { name, avatar } = req.body;
 
   try {
-    //prepare the update
+    // prepare the update
     const updateData = {};
     if (name) updateData.name = name;
     if (avatar) updateData.avatar = avatar;
@@ -128,12 +128,16 @@ const updateUser = async (req, res, next) => {
   } catch (err) {
     console.error(err);
     if (err.name === "DocumentNotFoundError") {
-      return next(new NOT_FOUND("User not found"));
+      return res
+        .status(NOT_FOUND)
+        .json({ message: "Id provided was not found" });
     }
     if (err.name === "ValidationError") {
-      return next(new BAD_REQUEST("User not found"));
+      return res.status(BAD_REQUEST).json({ message: "Invalid data provided" });
     }
-    return next(err);
+    return res
+      .status(SERVER_ERROR)
+      .json({ messsage: "An error has occurred on the server" });
   }
 };
 

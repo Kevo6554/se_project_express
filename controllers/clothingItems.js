@@ -4,6 +4,8 @@ const {
   CREATED,
   BAD_REQUEST,
   NOT_FOUND,
+  OK,
+  FORBIDDEN,
 } = require("../utils/errors");
 
 const createItem = (req, res) => {
@@ -49,7 +51,14 @@ const deleteItem = (req, res) => {
   ClothingItem.findById(itemId)
     .orFail()
     .then((item) => {
-      res.send(item);
+      if (!item.owner.equals(req.user._id)) {
+        return res
+          .status(FORBIDDEN)
+          .send({ message: "Cannot delete other user's items" });
+      }
+      return item
+        .deleteOne()
+        .then(() => res.status(OK).send({ message: "Successfully deleted" }));
     })
     .catch((err) => {
       console.error(err);
