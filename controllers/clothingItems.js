@@ -8,7 +8,7 @@ const {
   FORBIDDEN,
 } = require("../utils/errors");
 
-const createItem = (req, res) => {
+const createItem = (req, res, next) => {
   console.log(req.user._id);
 
   const { name, weather, imageUrl } = req.body;
@@ -32,9 +32,10 @@ const createItem = (req, res) => {
         .status(SERVER_ERROR)
         .json({ messsage: "An error has occurred on the server" });
     });
+  return next(error);
 };
 
-const getItems = (req, res) => {
+const getItems = (req, res, next) => {
   ClothingItem.find({})
     .then((item) => res.send(item))
     .catch((err) => {
@@ -43,9 +44,10 @@ const getItems = (req, res) => {
         .status(SERVER_ERROR)
         .json({ message: "An error has occurred on the server" });
     });
+  return next(error);
 };
 
-const deleteItem = (req, res) => {
+const deleteItem = (req, res, next) => {
   const { itemId } = req.params;
   console.log(itemId);
   ClothingItem.findById(itemId)
@@ -76,9 +78,10 @@ const deleteItem = (req, res) => {
         .status(SERVER_ERROR)
         .json({ message: "An error has occurred on the server" });
     });
+  return next(error);
 };
 
-const likeItem = (req, res) => {
+const likeItem = (req, res, next) => {
   console.log(req.user._id);
   ClothingItem.findByIdAndUpdate(
     req.params.itemId,
@@ -103,8 +106,9 @@ const likeItem = (req, res) => {
         .status(SERVER_ERROR)
         .json({ message: "An error has occurred on the server" });
     });
+  return next(error);
 };
-const dislikeItem = (req, res) => {
+const dislikeItem = (req, res, next) => {
   console.log(req.user._id);
   ClothingItem.findByIdAndUpdate(
     req.params.itemId,
@@ -129,6 +133,7 @@ const dislikeItem = (req, res) => {
         .status(SERVER_ERROR)
         .json({ message: "An error has occurred on the server" });
     });
+  return next(error);
 };
 module.exports = {
   createItem,
