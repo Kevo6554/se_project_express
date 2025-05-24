@@ -24,15 +24,13 @@ const createItem = (req, res, next) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res
-          .status(BAD_REQUEST)
-          .json({ message: "Invalid data provided" });
+        next({ statusCode: BAD_REQUEST, message: "Invalid data provided" });
       }
-      return res
-        .status(SERVER_ERROR)
-        .json({ messsage: "An error has occurred on the server" });
+      next({
+        statusCode: SERVER_ERROR,
+        message: "An error has occurred on the server",
+      });
     });
-  return next(error);
 };
 
 const getItems = (req, res, next) => {
@@ -40,11 +38,8 @@ const getItems = (req, res, next) => {
     .then((item) => res.send(item))
     .catch((err) => {
       console.error(err);
-      return res
-        .status(SERVER_ERROR)
-        .json({ message: "An error has occurred on the server" });
+      return next(err);
     });
-  return next(error);
 };
 
 const deleteItem = (req, res, next) => {
@@ -54,9 +49,10 @@ const deleteItem = (req, res, next) => {
     .orFail()
     .then((item) => {
       if (!item.owner.equals(req.user._id)) {
-        return res
-          .status(FORBIDDEN)
-          .send({ message: "Cannot delete other user's items" });
+        next({
+          statusCode: FORBIDDEN,
+          message: "Cannot delete other users items",
+        });
       }
       return item
         .deleteOne()
@@ -65,20 +61,16 @@ const deleteItem = (req, res, next) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(NOT_FOUND)
-          .json({ message: "Id provided was not found" });
+        next({ statusCode: NOT_FOUND, message: "Id provided was not found" });
       }
       if (err.name === "CastError") {
-        return res
-          .status(BAD_REQUEST)
-          .json({ message: "Invalid data provided" });
+        next({ statusCode: BAD_REQUEST, message: "Invalid data provided" });
       }
-      return res
-        .status(SERVER_ERROR)
-        .json({ message: "An error has occurred on the server" });
+      next({
+        statusCode: SERVER_ERROR,
+        message: "An error has occurred on the server",
+      });
     });
-  return next(error);
 };
 
 const likeItem = (req, res, next) => {
@@ -93,20 +85,16 @@ const likeItem = (req, res, next) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "CastError") {
-        return res
-          .status(BAD_REQUEST)
-          .json({ message: "Invalid data provided" });
+        next({ statusCode: BAD_REQUEST, message: "Invalid data provided" });
       }
       if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(NOT_FOUND)
-          .json({ message: "Id provided was not found" });
+        next({ statusCode: NOT_FOUND, message: "Id provide was not found" });
       }
-      return res
-        .status(SERVER_ERROR)
-        .json({ message: "An error has occurred on the server" });
+      next({
+        statusCode: SERVER_ERROR,
+        message: "An error has occurred on the server",
+      });
     });
-  return next(error);
 };
 const dislikeItem = (req, res, next) => {
   console.log(req.user._id);
@@ -120,20 +108,16 @@ const dislikeItem = (req, res, next) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "CastError") {
-        return res
-          .status(BAD_REQUEST)
-          .json({ message: "Invalid data provided" });
+        next({ statusCode: BAD_REQUEST, message: "Invalid data provided" });
       }
       if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(NOT_FOUND)
-          .json({ message: "Id provided was not found" });
+        next({ statusCode: NOT_FOUND, message: "Id provided was not found" });
       }
-      return res
-        .status(SERVER_ERROR)
-        .json({ message: "An error has occurred on the server" });
+      next({
+        statusCode: SERVER_ERROR,
+        message: "An error occurred on the server",
+      });
     });
-  return next(error);
 };
 module.exports = {
   createItem,
