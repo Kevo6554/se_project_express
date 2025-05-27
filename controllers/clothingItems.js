@@ -19,7 +19,7 @@ const createItem = (req, res, next) => {
   return ClothingItem.create({ name, weather, imageUrl, owner: ownerId })
     .then((item) => {
       console.log(item);
-      res.status(CREATED).json({ data: item });
+      res.status(CREATED).send(item);
     })
     .catch((err) => {
       console.error(err);
