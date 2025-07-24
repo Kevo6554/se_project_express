@@ -2,6 +2,7 @@ const cors = require("cors");
 const express = require("express");
 const errorHandler = require("./middleware/error-handler");
 const mongoose = require("mongoose");
+require("dotenv").config();
 const indexRoutes = require("./routes/index");
 const { errors } = require("celebrate");
 const { requestLogger, errorLogger } = require("./middleware/logger");
@@ -19,12 +20,19 @@ mongoose
   })
   .catch((e) => console.error(e));
 
+app.get("/crash-test", () => {
+  setTimeout(() => {
+    throw new Error("Server will crash now");
+  }, 0);
+});
+
 app.use(express.json());
 app.use("/", indexRoutes);
 app.use(errorHandler);
 app.use(errors());
 app.use(requestLogger);
 app.use(errorLogger);
+
 app.listen(PORT, () => {
   // if everything works fine, the console will show which port the application is listening to
   console.log(`App listening at port ${PORT}`);
