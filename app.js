@@ -27,11 +27,11 @@ app.get("/crash-test", () => {
 });
 
 app.use(express.json());
-app.use("/", indexRoutes);
-app.use(errorHandler);
-app.use(errors());
 app.use(requestLogger);
+app.use("/", indexRoutes);
 app.use(errorLogger);
+app.use(errors());
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   // if everything works fine, the console will show which port the application is listening to
