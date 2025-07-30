@@ -1,11 +1,10 @@
 const ClothingItem = require("../models/clothingItem");
 const {
-  SERVER_ERROR,
   CREATED,
-  BAD_REQUEST,
-  NOT_FOUND,
+  BadRequestError,
+  NotFoundError,
   OK,
-  FORBIDDEN,
+  ForbiddenError,
 } = require("../utils/errors");
 
 const createItem = (req, res, next) => {
@@ -24,12 +23,9 @@ const createItem = (req, res, next) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        next({ statusCode: BAD_REQUEST, message: "Invalid data provided" });
+        return next(new BadRequestError("Invalid data provided"));
       }
-      next({
-        statusCode: SERVER_ERROR,
-        message: "An error has occurred on the server",
-      });
+      return next(err);
     });
 };
 
@@ -49,10 +45,7 @@ const deleteItem = (req, res, next) => {
     .orFail()
     .then((item) => {
       if (!item.owner.equals(req.user._id)) {
-        next({
-          statusCode: FORBIDDEN,
-          message: "Cannot delete other users items",
-        });
+        throw new ForbiddenError("You are not authorized to delete this item");
       }
       return item
         .deleteOne()
@@ -61,15 +54,12 @@ const deleteItem = (req, res, next) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        next({ statusCode: NOT_FOUND, message: "Id provided was not found" });
+        return next(new NotFoundError("Id provided not found"));
       }
       if (err.name === "CastError") {
-        next({ statusCode: BAD_REQUEST, message: "Invalid data provided" });
+        return next(new BadRequestError("Invalid data provided"));
       }
-      next({
-        statusCode: SERVER_ERROR,
-        message: "An error has occurred on the server",
-      });
+      return next(err);
     });
 };
 
@@ -85,15 +75,12 @@ const likeItem = (req, res, next) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "CastError") {
-        next({ statusCode: BAD_REQUEST, message: "Invalid data provided" });
+        return next(new BadRequestError("Invalid data provided"));
       }
       if (err.name === "DocumentNotFoundError") {
-        next({ statusCode: NOT_FOUND, message: "Id provide was not found" });
+        return next(new NotFoundError("Id provided not found"));
       }
-      next({
-        statusCode: SERVER_ERROR,
-        message: "An error has occurred on the server",
-      });
+      return next(err);
     });
 };
 const dislikeItem = (req, res, next) => {
@@ -108,15 +95,12 @@ const dislikeItem = (req, res, next) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "CastError") {
-        next({ statusCode: BAD_REQUEST, message: "Invalid data provided" });
+        return next(new BadRequestError("Invalid data provided"));
       }
       if (err.name === "DocumentNotFoundError") {
-        next({ statusCode: NOT_FOUND, message: "Id provided was not found" });
+        next(new NotFoundError("Id provided not found"));
       }
-      next({
-        statusCode: SERVER_ERROR,
-        message: "An error occurred on the server",
-      });
+      return next(err);
     });
 };
 module.exports = {

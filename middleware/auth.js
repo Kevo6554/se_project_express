@@ -8,7 +8,9 @@ function auth(req, res, next) {
 
   if (!authorization || !authorization.startsWith("Bearer")) {
     // check if the authorization header from the request
-    return res.status(ERROR).send({ message: "Authorization is required" }); // If not throw an error
+    const error = new Error("Unauthorized");
+    error.status = 500; // If not throw an error
+    return next(error);
   }
 
   // Extract the toke from the authorizarion header

@@ -4,22 +4,21 @@ const jwt = require("jsonwebtoken");
 
 const User = require("../models/user");
 const {
-  SERVER_ERROR,
-  NOT_FOUND,
-  BAD_REQUEST,
+  NotFoundError,
+  BadRequestError,
   OK,
-  ERROR,
+  UnauthorizedError,
   CREATED,
-  CONFLICT_ERROR,
+  ConflictError,
 } = require("../utils/errors");
 
 const { JWT_SECRET } = require("../utils/config");
 
-const login = (req, res) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.status(BAD_REQUEST).send({ message: "Inavalid data provided" });
+    throw new BadRequestError("Invalid data provided");
   }
   return User.findUserByCredentials(email, password)
     .then((user) => {
@@ -32,21 +31,17 @@ const login = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.message === "Incorrect email or password") {
-        return res
-          .status(ERROR)
-          .send({ message: "Incorrect email or password" });
+        return next(new UnauthorizedError("Incorrect email or password"));
       }
-      return res
-        .status(SERVER_ERROR)
-        .send({ message: "An error has occurred on the server" });
+      return next(err);
     });
 };
 
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
 
   if (!name || !avatar || !email || !password) {
-    return res.status(BAD_REQUEST).send({ message: "Invalid data provided" });
+    return next(BadRequestError("Invalid data provided"));
   }
 
   // check if the user exists
@@ -69,22 +64,16 @@ const createUser = (req, res) => {
     .catch((err) => {
       console.log(">>>", err);
       if (err.name === "ValidationError") {
-        return res
-          .status(BAD_REQUEST)
-          .send({ message: "Invalid data provided" });
+        return next(BadRequestError("Invalid data provided"));
       }
       if (err.code === 11000) {
-        return res
-          .status(CONFLICT_ERROR)
-          .send({ message: "User already exist" });
+        return next(new ConflictError("Email is already in use"));
       }
-      return res
-        .status(SERVER_ERROR)
-        .send({ message: "An error has occured on the server" });
+      return next(err);
     });
 };
 
-const getUser = (req, res) => {
+const getUser = (req, res, next) => {
   const { _id } = req.user;
   User.findById(_id)
     .orFail()
@@ -92,22 +81,16 @@ const getUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(NOT_FOUND)
-          .send({ message: "Id provided was not found" });
+        return next(new NotFoundError("Id provided not found"));
       }
       if (err.name === "CastError") {
-        return res
-          .status(BAD_REQUEST)
-          .send({ message: "Invalid data provided" });
+        return next(new BadRequestError("Invalid data provided"));
       }
-      return res
-        .status(SERVER_ERROR)
-        .send({ message: "An error has occured on the server" });
+      return next(err);
     });
 };
 
-const updateUser = async (req, res) => {
+const updateUser = async (req, res, next) => {
   const { name, avatar } = req.body;
 
   try {
@@ -123,21 +106,18 @@ const updateUser = async (req, res) => {
     }).orFail();
 
     // Exclude the password
-    const { password: _, ...userWithoutPassword } = user.toObject();
+    const userWithoutPassword = user.toObject();
+    delete userWithoutPassword.password;
     return res.status(OK).send({ data: userWithoutPassword });
   } catch (err) {
     console.error(err);
     if (err.name === "DocumentNotFoundError") {
-      return res
-        .status(NOT_FOUND)
-        .json({ message: "Id provided was not found" });
+      return next(new NotFoundError("Id provided not found"));
     }
     if (err.name === "ValidationError") {
-      return res.status(BAD_REQUEST).json({ message: "Invalid data provided" });
+      return next(new BadRequestError("Invalid data provided"));
     }
-    return res
-      .status(SERVER_ERROR)
-      .json({ messsage: "An error has occurred on the server" });
+    return next(err);
   }
 };
 

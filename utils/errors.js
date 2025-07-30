@@ -7,6 +7,12 @@ const NOT_FOUND = 404;
 const CONFLICT_ERROR = 409;
 const SERVER_ERROR = 500;
 
+const BadRequestError = require("./BadRequestError");
+const UnauthorizedError = require("./UnauthorizedError");
+const ForbiddenError = require("./ForbiddenError");
+const NotFoundError = require("./NotFoundError");
+const ConflictError = require("./ConflictError");
+
 module.exports = {
   OK,
   CREATED,
@@ -16,4 +22,9 @@ module.exports = {
   NOT_FOUND,
   CONFLICT_ERROR,
   SERVER_ERROR,
+  BadRequestError,
+  UnauthorizedError,
+  ForbiddenError,
+  NotFoundError,
+  ConflictError,
 };
