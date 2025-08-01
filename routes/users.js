@@ -1,13 +1,13 @@
 const router = require("express").Router();
-const { celebrate, Joi } = require("../middleware/validation");
+const { Joi, celebrate } = require("celebrate");
 const auth = require("../middleware/auth");
 
 const { getUser, updateUser } = require("../controllers/users");
 
 const validateUserUpdate = celebrate({
   body: Joi.object().keys({
-    name: Joi().required(),
-    avatr: Joi.stringf().uri().required(),
+    name: Joi().string().min(2).max(30),
+    avatar: Joi.string().uri().required(),
   }),
 });
 

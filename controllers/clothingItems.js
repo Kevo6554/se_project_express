@@ -98,7 +98,7 @@ const dislikeItem = (req, res, next) => {
         return next(new BadRequestError("Invalid data provided"));
       }
       if (err.name === "DocumentNotFoundError") {
-        next(new NotFoundError("Id provided not found"));
+        return next(new NotFoundError("Id provided not found"));
       }
       return next(err);
     });
