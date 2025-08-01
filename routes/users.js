@@ -6,7 +6,7 @@ const { getUser, updateUser } = require("../controllers/users");
 
 const validateUserUpdate = celebrate({
   body: Joi.object().keys({
-    name: Joi().string().min(2).max(30),
+    name: Joi.string().min(2).max(30),
     avatar: Joi.string().uri().required(),
   }),
 });
