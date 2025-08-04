@@ -8,8 +8,7 @@ function auth(req, res, next) {
 
   if (!authorization || !authorization.startsWith("Bearer")) {
     // check if the authorization header from the request
-    const error = new Error("Unauthorized");
-    error.status = 401; // If not throw an error
+
     return next(new UnauthorizedError("Unauthorized error"));
   }
 
@@ -25,7 +24,7 @@ function auth(req, res, next) {
   }
   req.user = payload; // Add the payload to the request object
 
-  return next(err); // Pass control to the next middleware function and return
+  return next(); // Pass control to the next middleware function and return
 }
 
 module.exports = auth;

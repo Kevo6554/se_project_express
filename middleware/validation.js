@@ -46,7 +46,7 @@ module.exports.validateUserBody = celebrate({
   }),
 });
 
-module.exports.validatAuth = celebrate({
+module.exports.validateAuth = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email().messages({
       "string.empty": 'The "email" field must be filled in',
